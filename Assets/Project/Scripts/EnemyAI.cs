@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [Header("=== THÔNG SỐ CƠ BẢN ===")]
+    [Header("Thông số quái")]
     [SerializeField] private int maxHealth = 60;
     [SerializeField] private float moveSpeed = 2.5f;
     [SerializeField] private int attackDamage = 10;
     [SerializeField] private float attackCooldown = 1.5f;
     [SerializeField] private float knockbackForce = 2.5f;
 
-    [Header("=== TẦM NHÌN (RAYCAST 2D & LAYER MASK) ===")]
+    [Header("Tầm nhìn quái")]
     [SerializeField] private float visionRange = 6f;
     [SerializeField] private LayerMask playerLayer;
 
-    [Header("=== PHẠM VI MẶT ĐƯỜNG (2.5D) ===")]
+    [Header("DIện tích đường của quái được phép đi bên trong")]
     [SerializeField] private float minX = -9f;
     [SerializeField] private float maxX = 9f;
     [SerializeField] private float minY = -5f;
     [SerializeField] private float maxY = -3.5f;
 
-    [Header("=== ZOOM XA GẦN (DEPTH SCALE) ===")]
+    [Header("Xa thì bé gần thì to")]
     [SerializeField] private float minScale = 0.5f;
     [SerializeField] private float maxScale = 1.2f;
 
@@ -44,7 +44,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        // Tìm Player theo Tag đúng theo bài học
+        // Tìm player (Layermask)
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -56,22 +56,14 @@ public class EnemyAI : MonoBehaviour
     private void Update()
     {
         if (player == null) return;
-
-        // 1. Kiểm tra tầm nhìn bằng Raycast 2D và LayerMask
         if (CanSeePlayer() && !isAttacking)
         {
-            // 2. Di chuyển tiếp cận Player
             MoveTowardsPlayer();
         }
-
-        // 3. Giữ quái trên mặt đường bằng Mathf.Clamp
         ClampToRoadArea();
-
-        // 4. Zoom xa gần bằng Mathf.Lerp
         UpdateDepthScale();
     }
 
-    // Bắn tia Raycast 2D về phía Player sử dụng LayerMask
     private bool CanSeePlayer()
     {
         Vector2 direction = (player.position - transform.position);
@@ -92,7 +84,6 @@ public class EnemyAI : MonoBehaviour
     {
         transform.position = Vector3.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
 
-        // Quay mặt theo hướng trái/phải
         if (player.position.x < transform.position.x)
         {
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
@@ -118,7 +109,7 @@ public class EnemyAI : MonoBehaviour
         transform.localScale = new Vector3(signX * currentScale, currentScale, 1f);
     }
 
-    // Tấn công khi chạm vào Player bằng Trigger 2D
+    // Tan cong khi cham vao player (trigger)
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("Player") && Time.time >= lastAttackTime + attackCooldown && !isAttacking)
@@ -132,23 +123,22 @@ public class EnemyAI : MonoBehaviour
         isAttacking = true;
         lastAttackTime = Time.time;
 
-        // Phát sáng nhẹ 0.5s bằng cách đổi màu sáng
-        if (spriteRenderer != null)
+        // Phat sang 0.5s
         {
             spriteRenderer.color = new Color(1f, 1f, 0.2f, 1f);
         }
 
-        // Đẩy lùi Player theo hướng ngược lại
+        // Day lui
         Vector2 knockbackDir = (player.position - transform.position).normalized;
         if (playerController != null)
         {
             playerController.ApplyKnockback(knockbackDir, knockbackForce);
-            Debug.Log("Quái tấn công gây " + attackDamage + " sát thương!");
+            Debug.Log("Anh tùng nhắc nhở gây " + attackDamage + " sát thương!");
         }
 
         yield return new WaitForSeconds(0.5f);
 
-        // Trở về màu ban đầu
+        //  Reset color
         if (spriteRenderer != null)
         {
             spriteRenderer.color = originalColor;
@@ -157,7 +147,7 @@ public class EnemyAI : MonoBehaviour
         isAttacking = false;
     }
 
-    // Nhận sát thương khi trúng đạn
+    // Nhan dame khi bi dan ban
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -165,10 +155,10 @@ public class EnemyAI : MonoBehaviour
 
         StartCoroutine(FlashWhiteRoutine());
 
-        // Hết máu -> Xóa quái (Destroy)
+        // Hp = 0 => destroy
         if (currentHealth <= 0)
         {
-            Debug.Log("Quái bị tiêu diệt!");
+            Debug.Log("Anh Tùng bị tiêu diệt");
             Destroy(gameObject);
         }
     }
@@ -183,7 +173,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // Vẽ tầm nhìn bằng Gizmos
+    // Gizmos ve tam nhin quai
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.magenta;

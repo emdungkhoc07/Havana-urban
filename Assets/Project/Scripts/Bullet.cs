@@ -5,12 +5,12 @@ public class Bullet : MonoBehaviour
     [Header("setting")]
     [SerializeField] private float speed = 12f;
     [SerializeField] private int damage = 25;
-    [SerializeField] private float lifeTime = 3f; // tu bien mat sau 3s
+    [SerializeField] private float lifeTime = 3f;
     [SerializeField] private LayerMask enemyLayer;
 
-    private float direction = 1f; // 1: bay sang phải, -1: bay sang trái
+    private float direction = 1f; // huong bay cua dan (phai, trai)
 
-    // Hàm khởi tạo hướng bay khi đạn được sinh ra (Instantiate)
+    // khoi tao huong bay cua dan
     public void Setup(float shootDirection, LayerMask targetLayer)
     {
         direction = Mathf.Sign(shootDirection);
@@ -33,7 +33,7 @@ public class Bullet : MonoBehaviour
 
         if (hit.collider != null)
         {
-            // check xem raycast co cham vao dung enemy hay cai khac
+            // check xem raycast co cham vao dung enemy ko,  hay la cai khac
             if (hit.collider.TryGetComponent<EnemyAI>(out var enemy))
             {
                 // gay dame
@@ -44,7 +44,7 @@ public class Bullet : MonoBehaviour
             }
         }
 
-        // dan di chuyen ve truoc 
+        //dan ban ve phia truoc 
         transform.position += (Vector3)moveVector;
     }
 
