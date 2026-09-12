@@ -1,0 +1,22 @@
+Vòng đời monobehaviour
+Gizmos (lưới)
+Tranform (di chuyển, gravity, xoay...)
+
+scrips:
+ <player>
+  -có collider 2D (hitbox)
+  -có rigidbody2D  (cho object có khối lượng, vận tốc, lực tác động)
+  -Cach di chuyen
+(de tron Fixed update)
+Transform
+Rigidbody move posititon
+Rigidbody add force - forecemode 2D (co force, impulse)
+(de trong update)
+Rigdbody liner velocity = new vector 2 (x, y)
+
+-physic 2D
+va chạm (điều kiện xảy ra va chạm)
+rigid lody 2D (dynamic, kinematic, static)
+trigger (tạo sự kiện (trư fmaus, + tiền,.. ở 1 vị trí nào đó)
+raycart 2D (tia dò collider 2D)
+layer mask (nhãn phân loại xem ai được tương tác với ai)
